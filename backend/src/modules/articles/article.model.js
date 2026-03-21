@@ -157,11 +157,22 @@ articleSchema.index(
 
 // Pre-save Middleware
 
-articleSchema.pre("save", function (next) {
+articleSchema.pre("save", async function (next) {
   if (this.isModified("title")) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
-    next();
+    const baseSlug = slugify(this.title, { lower: true, strict: true });
+    const existingArticle = await mongoose.model("Article").findOne({
+      slug: baseSlug,
+      _id: { $ne: this._id },
+    });
+
+    if (existingArticle) {
+      const suffix = Math.random().toString(36).substring(2, 7);
+      this.slug = `${baseSlug}-${suffix}`;
+    } else {
+      this.slug = baseSlug;
+    }
   }
+  next();
 });
 
 articleSchema.pre("save", function (next) {
