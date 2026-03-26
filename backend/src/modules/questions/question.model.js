@@ -76,7 +76,6 @@ const questionSchema = new mongoose.Schema(
     voteScore: {
       type: Number,
       default: 0,
-      index: true,
     },
 
     // Engagement
