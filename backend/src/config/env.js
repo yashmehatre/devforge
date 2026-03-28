@@ -9,6 +9,9 @@ const requiredEnvVars = [
   "JWT_REFRESH_SECRET",
   "JWT_REFRESH_EXPIRES_IN",
   "CLIENT_URL",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+  "GOOGLE_CALLBACK_URL",
 ];
 
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
@@ -37,6 +40,11 @@ const config = {
   },
   client: {
     url: process.env.CLIENT_URL,
+  },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL,
   },
 };
 
