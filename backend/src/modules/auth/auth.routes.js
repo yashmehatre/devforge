@@ -10,10 +10,21 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../../utils/tokens");
+const {
+  validate,
+  signupSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  updatePasswordSchema,
+} = require("./auth.validation");
 
-router.post("/signup", AuthController.signUp);
-router.post("/login", AuthController.login);
-router.post("/forgot-password", AuthController.forgotPassword);
+router.post("/signup", validate(signupSchema), AuthController.signUp);
+router.post("/login", validate(loginSchema), AuthController.login);
+router.post(
+  "/forgot-password",
+  validate(forgotPasswordSchema),
+  AuthController.forgotPassword,
+);
 router.patch("/reset-password/:token", AuthController.resetPassword);
 router.post("/refresh", AuthController.refreshToken);
 router.patch("/verify-email/:token", AuthController.verifyEmail);
@@ -45,6 +56,11 @@ router.get(
 );
 
 router.post("/logout", protect, AuthController.logout);
-router.patch("/update-password", protect, AuthController.updatePassword);
+router.patch(
+  "/update-password",
+  protect,
+  validate(updatePasswordSchema),
+  AuthController.updatePassword,
+);
 
 module.exports = router;
