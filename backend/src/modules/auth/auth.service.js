@@ -138,6 +138,45 @@ const verifyEmail = async (rawToken) => {
   return { user };
 };
 
+const findOrCreateGoogleUser = async (googleId, email, name, avatar) => {
+  let user = await User.findOne({ googleId });
+  if (user) return user;
+  user = await User.findOne({ email });
+  if (user) {
+    user.googleId = googleId;
+    await user.save({ validateBeforeSave: false });
+    return user;
+  }
+  user = await User.create({
+    email,
+    username: name,
+    avatar,
+    googleId,
+    isEmailVerified: true,
+  });
+  return user;
+};
+
+const updatePassword = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId).select("+password");
+
+  const isMatch = await user.comparePassword(currentPassword);
+  if (!isMatch) {
+    throw new AppError("Current password is incorrect", 401);
+  }
+
+  user.password = newPassword;
+  user.refreshToken = null;
+  await user.save();
+
+  const accessToken = generateAccessToken(userId);
+  const refreshToken = generateRefreshToken(userId);
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  return { user, accessToken, refreshToken };
+};
+
 module.exports = {
   signUp,
   login,
@@ -146,4 +185,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  findOrCreateGoogleUser,
+  updatePassword,
 };
