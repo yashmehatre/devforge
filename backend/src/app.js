@@ -2,6 +2,9 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const config = require("./config/env");
+const rateLimit = require("express-rate-limit");
+const authRoutes = require("./modules/auth/auth.routes");
+const AppError = require("./utils/AppError");
 
 const app = express();
 
@@ -35,12 +38,29 @@ app.get("/health", (req, res) => {
   });
 });
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { status: "error", message: "Too many requests, try again later" },
+});
+
+app.use("/api/auth", authLimiter, authRoutes);
+
 // 404 Handler
 
-app.use((req, res) => {
-  res.status(404).json({
-    status: "error",
-    message: `Route ${req.method} ${req.originalUrl} not found`,
+app.use((req, res, next) => {
+  next(new AppError(`Route ${req.method} ${req.originalUrl} not found`, 404));
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+    ...(config.app.env === "development" && { stack: err.stack }),
   });
 });
 

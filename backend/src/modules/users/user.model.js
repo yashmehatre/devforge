@@ -206,18 +206,16 @@ userSchema.index({ skills: 1 });
 userSchema.index({ isOpenToWork: 1, role: 1 });
 userSchema.index({ createdAt: -1 });
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password") || this.isNew) return next();
+userSchema.pre("save", function () {
+  if (!this.isModified("password") || this.isNew) return;
 
   this.passwordChangedAt = Date.now() - 1000;
-  next();
 });
 
 // Instance Methods
@@ -262,9 +260,8 @@ userSchema.methods.isLocked = function () {
 };
 
 // Query Middleware
-userSchema.pre(/^find/, function (next) {
+userSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 const User = mongoose.model("User", userSchema);
