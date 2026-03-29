@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email is required"],
-      uniqure: true,
+      unique: true,
       trim: true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
@@ -160,8 +160,8 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
     socialLinks: {
-      type: [socialLinksSchema],
-      default: [],
+      type: socialLinksSchema,
+      default: () => ({}),
     },
     isOpenToWork: {
       type: Boolean,
@@ -194,7 +194,7 @@ const userSchema = new mongoose.Schema(
   {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { virtulas: true },
+    toObject: { virtuals: true },
   },
 );
 
