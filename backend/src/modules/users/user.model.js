@@ -199,8 +199,8 @@ const userSchema = new mongoose.Schema(
 );
 
 // Indexes
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+// userSchema.index({ email: 1 });
+// userSchema.index({ username: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ skills: 1 });
 userSchema.index({ isOpenToWork: 1, role: 1 });

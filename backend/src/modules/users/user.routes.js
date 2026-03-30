@@ -1,11 +1,12 @@
 const express = require("express");
 const UserController = require("./user.controller");
 const { protect } = require("../auth/auth.middleware");
+const { validate, updateMeSchema } = require("../auth/auth.validation");
 
 const router = express.Router();
 
 router.get("/me", protect, UserController.getMe);
-router.patch("/me", protect, UserController.updateMe);
+router.patch("/me", validate(updateMeSchema), protect, UserController.updateMe);
 router.delete("/me", protect, UserController.deleteMe);
 
 router.get("/:username", UserController.getProfile);

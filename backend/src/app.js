@@ -56,6 +56,35 @@ app.use((req, res, next) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
+  // Mongoose CastError - invalid ObjectId
+  if (err.name === "CastError") {
+    err = new AppError(`Invalid ${err.path}: ${err.value}`, 400);
+  }
+
+  // Mongoose Duplicate Key
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyValue)[0];
+    err = new AppError(`${field} already exists`, 400);
+  }
+
+  // Mongoose Validation Error
+  if (err.name === "ValidationError") {
+    const message = Object.values(err.errors)
+      .map((e) => e.message)
+      .join(", ");
+    err = new AppError(message, 400);
+  }
+
+  // JWT Invalid
+  if (err.name === "JsonWebTokenError") {
+    err = new AppError("Invalid token. Please log in again.", 401);
+  }
+
+  // JWT Expired
+  if (err.name === "TokenExpiredError") {
+    err = new AppError("Token expired. Please log in again.", 401);
+  }
+
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
