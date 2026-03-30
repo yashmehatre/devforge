@@ -23,4 +23,5 @@ const followSchema = new mongoose.Schema(
 );
 
 followSchema.index({ follower: 1, following: 1 }, { unique: true });
-module.exports = follow;
+const Follow = mongoose.model("Follow", followSchema);
+module.exports = Follow;

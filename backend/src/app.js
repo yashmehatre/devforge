@@ -4,6 +4,7 @@ const cors = require("cors");
 const config = require("./config/env");
 const rateLimit = require("express-rate-limit");
 const authRoutes = require("./modules/auth/auth.routes");
+const userRoutes = require("./modules/users/user.routes");
 const AppError = require("./utils/AppError");
 
 const app = express();
@@ -45,6 +46,7 @@ const authLimiter = rateLimit({
 });
 
 app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/users", userRoutes);
 
 // 404 Handler
 

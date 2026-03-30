@@ -1,4 +1,5 @@
 const User = require("./user.model");
+const Follow = require("./follow.model");
 const AppError = require("../../utils/AppError");
 
 const getMe = async (userId) => {
@@ -43,10 +44,70 @@ const deleteMe = async (userId) => {
 
 const getProfile = async (username) => {
   const user = await User.findOne({ username }).select(
-    "-password -refreshToken -passwordResetToken - emailVerificationToken -loginAttempts -lockUntil",
+    "-password -refreshToken -passwordResetToken -emailVerificationToken -loginAttempts -lockUntil",
   );
   if (!user) throw new AppError("No user found", 404);
   return { user };
 };
 
-module.exports = { getMe, updateMe, deleteMe, getProfile };
+const follow = async (followerId, followingId) => {
+  if (followerId.toString() === followingId.toString())
+    throw new AppError("You cannot follow yourself", 400);
+  try {
+    await Follow.create({
+      follower: followerId,
+      following: followingId,
+    });
+    await User.findByIdAndUpdate(followerId, {
+      $inc: { totalFollowing: 1 },
+    });
+    await User.findByIdAndUpdate(followingId, { $inc: { totalFollowers: 1 } });
+  } catch (err) {
+    if (err.code === 11000)
+      throw new AppError("Already following this user", 400);
+  }
+};
+
+const unfollow = async (followerId, followingId) => {
+  const result = await Follow.deleteOne({
+    follower: followerId,
+    following: followingId,
+  });
+  if (result.deletedCount !== 1)
+    throw new AppError("You are not following this user", 400);
+  await User.findByIdAndUpdate(followerId, {
+    $inc: { totalFollowing: -1 },
+  });
+  await User.findByIdAndUpdate(followingId, {
+    $inc: { totalFollowers: -1 },
+  });
+};
+
+const getFollowers = async (userId, page = 1, limit = 20) => {
+  const skip = (page - 1) * limit;
+  const followers = await Follow.find({ following: userId })
+    .populate("follower", "username fullName avatar bio")
+    .limit(limit)
+    .skip(skip);
+  return { followers };
+};
+
+const getFollowing = async (userId, page = 1, limit = 20) => {
+  const skip = (page - 1) * limit;
+  const following = await Follow.find({ follower: userId })
+    .populate("following", "username fullName avatar bio")
+    .limit(limit)
+    .skip(skip);
+  return { following };
+};
+
+module.exports = {
+  getMe,
+  updateMe,
+  deleteMe,
+  getProfile,
+  follow,
+  unfollow,
+  getFollowers,
+  getFollowing,
+};
