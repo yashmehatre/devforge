@@ -157,7 +157,7 @@ articleSchema.index(
 
 // Pre-save Middleware
 
-articleSchema.pre("save", async function (next) {
+articleSchema.pre("save", async function () {
   if (this.isModified("title")) {
     const baseSlug = slugify(this.title, { lower: true, strict: true });
     const existingArticle = await mongoose.model("Article").findOne({
@@ -172,38 +172,34 @@ articleSchema.pre("save", async function (next) {
       this.slug = baseSlug;
     }
   }
-  next();
 });
 
-articleSchema.pre("save", function (next) {
+articleSchema.pre("save", function () {
   if (this.isModified("body")) {
     const wordCount = this.body.split(/\s+/).length;
-    this.readTime = Math.coil(wordCount / 200);
+    this.readTime = Math.ceil(wordCount / 200);
   }
-  next();
 });
 
-articleSchema.pre("save", function (next) {
+articleSchema.pre("save", function () {
   if (this.isModified("status") && this.status === "published") {
     if (!this.publishedAt) {
       this.publishedAt = Date.now();
     }
   }
-  next();
 });
 
 // Query Middleware
 
-articleSchema.pre(/^find/, function (next) {
+articleSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 // Virtual Fields
 
 articleSchema.virtual("isLikedBy").get(function () {
   return function (userId) {
-    return this.likes.includes(userId.toString());
+    return this.likes.some((id) => id.toString() === userId.toString());
   }.bind(this);
 });
 
