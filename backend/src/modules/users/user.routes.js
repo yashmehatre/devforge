@@ -2,8 +2,11 @@ const express = require("express");
 const UserController = require("./user.controller");
 const { protect } = require("../auth/auth.middleware");
 const { validate, updateMeSchema } = require("../auth/auth.validation");
+const articleRouter = require("../articles/article.routes");
 
 const router = express.Router();
+
+router.use("/:id/articles", articleRouter);
 
 router.get("/me", protect, UserController.getMe);
 router.patch("/me", validate(updateMeSchema), protect, UserController.updateMe);

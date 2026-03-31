@@ -11,12 +11,12 @@ const {
   generateRefreshToken,
 } = require("../../utils/tokens");
 const {
-  validate,
   signupSchema,
   loginSchema,
   forgotPasswordSchema,
   updatePasswordSchema,
 } = require("./auth.validation");
+const validate = require("../../utils/validate");
 
 router.post("/signup", validate(signupSchema), AuthController.signUp);
 router.post("/login", validate(loginSchema), AuthController.login);

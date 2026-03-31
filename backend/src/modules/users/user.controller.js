@@ -3,7 +3,7 @@ const catchAsync = require("../../utils/catchAsync");
 
 const getMe = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
-  const user = await UserService.getMe(userId);
+  const { user } = await UserService.getMe(userId);
   res.status(200).json({
     status: "success",
     data: { user },
@@ -13,7 +13,7 @@ const getMe = catchAsync(async (req, res, next) => {
 const updateMe = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
   const updateData = req.body;
-  const user = await UserService.updateMe(userId, updateData);
+  const { user } = await UserService.updateMe(userId, updateData);
   res.status(200).json({
     status: "success",
     data: { user },
@@ -30,7 +30,7 @@ const deleteMe = catchAsync(async (req, res, next) => {
 
 const getProfile = catchAsync(async (req, res, next) => {
   const username = req.params.username;
-  const user = await UserService.getProfile(username);
+  const { user } = await UserService.getProfile(username);
   res.status(200).json({
     status: "success",
     data: {

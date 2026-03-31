@@ -5,6 +5,7 @@ const config = require("./config/env");
 const rateLimit = require("express-rate-limit");
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
+const articleRoutes = require("./modules/articles/article.routes");
 const AppError = require("./utils/AppError");
 
 const app = express();
@@ -47,6 +48,7 @@ const authLimiter = rateLimit({
 
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/articles", articleRoutes);
 
 // 404 Handler
 
