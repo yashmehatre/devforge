@@ -3,10 +3,10 @@ const AppError = require("../../utils/AppError");
 
 const getFeed = async (filters = {}, page = 1, limit = 20) => {
   const skip = (page - 1) * limit;
-  const query = { status: "published", ...filters };
+  const query = { status: "published", isActive: { $ne: false }, ...filters };
 
   const [articles, total] = await Promise.all([
-    Article.find({ query })
+    Article.find(query)
       .populate("author", "username fullName avatar")
       .sort({ publishedAt: -1 })
       .limit(limit)
@@ -30,7 +30,7 @@ const getArticle = async (slug) => {
 };
 
 const createArticle = async (userId, articleData) => {
-  const article = await Article.create({ articleData, author: userId });
+  const article = await Article.create({ ...articleData, author: userId });
   return { article };
 };
 

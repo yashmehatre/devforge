@@ -191,9 +191,9 @@ articleSchema.pre("save", function () {
 
 // Query Middleware
 
-articleSchema.pre(/^find/, function () {
-  this.find({ isActive: { $ne: false } });
-});
+// articleSchema.pre(/^find/, function () {
+//   this.find({ isActive: { $ne: false } });
+// });
 
 // Virtual Fields
 

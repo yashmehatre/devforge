@@ -1,5 +1,4 @@
 const Joi = require("joi");
-const AppError = require("../../utils/AppError");
 
 const categoryEnum = [
   "javascript",
@@ -24,7 +23,7 @@ const createArticleSchema = Joi.object({
   tags: Joi.array().items(Joi.string()).max(5).optional(),
   coverImage: Joi.string().optional().allow(""),
   seoTitle: Joi.string().max(70).optional().allow(""),
-  seoDescription: Joi.string(160).optional().allow(""),
+  seoDescription: Joi.string().max(160).optional().allow(""),
 });
 
 const updateArticleSchema = Joi.object({
