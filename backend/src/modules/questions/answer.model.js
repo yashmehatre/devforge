@@ -94,16 +94,15 @@ answerSchema.index({ author: 1, createdAt: -1 });
 
 // Pre-save Middleware
 
-answerSchema.pre("save", function (next) {
+answerSchema.pre("save", function () {
   if (!this.isNew("body") && this.isModified("body")) {
     this.isEdited = true;
   }
-  next();
 });
 
 // Virtual Fields
 
-answerSchema.virtuals("hasVoted").get(function () {
+answerSchema.virtual("hasVoted").get(function () {
   return function (userId) {
     return this.votes.find(
       (vote) => vote.user.toString() === userId.toString(),
@@ -113,9 +112,8 @@ answerSchema.virtuals("hasVoted").get(function () {
 
 // Query Middleware
 
-answerSchema.pre(/^find/, function (next) {
+answerSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 const Answer = mongoose.model("Answer", answerSchema);

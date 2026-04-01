@@ -121,11 +121,10 @@ questionSchema.index(
 
 // Pre-save Middleware
 
-questionSchema.pre("save", function (next) {
+questionSchema.pre("save", function () {
   if (this.isModified("acceptedAnswer")) {
     this.isSolved = !!this.acceptedAnswer;
   }
-  next();
 });
 
 // Virtual Fields
@@ -140,9 +139,8 @@ questionSchema.virtual("hasVoted").get(function () {
 
 // Query Middleware
 
-questionSchema.pre(/^find/, function (next) {
+questionSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 const Question = mongoose.model("Question", questionSchema);
