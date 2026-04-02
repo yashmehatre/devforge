@@ -46,9 +46,9 @@ const authLimiter = rateLimit({
   message: { status: "error", message: "Too many requests, try again later" },
 });
 
-app.use("/api/auth", authLimiter, authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/articles", articleRoutes);
+app.use("/api/v1/auth", authLimiter, authRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/articles", articleRoutes);
 
 // 404 Handler
 
