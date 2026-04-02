@@ -95,7 +95,7 @@ answerSchema.index({ author: 1, createdAt: -1 });
 // Pre-save Middleware
 
 answerSchema.pre("save", function () {
-  if (!this.isNew("body") && this.isModified("body")) {
+  if (!this.isNew && this.isModified("body")) {
     this.isEdited = true;
   }
 });
