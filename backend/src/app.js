@@ -6,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const articleRoutes = require("./modules/articles/article.routes");
+const questionRoutes = require("./modules/questions/question.routes");
 const AppError = require("./utils/AppError");
 
 const app = express();
@@ -49,6 +50,7 @@ const authLimiter = rateLimit({
 app.use("/api/v1/auth", authLimiter, authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/articles", articleRoutes);
+app.use("/api/v1/questions", questionRoutes);
 
 // 404 Handler
 
