@@ -1,14 +1,17 @@
 const express = require("express");
 const QuestionController = require("./question.controller");
+const answerRoutes = require("./answer.routes");
 const validate = require("../../utils/validate");
+const toggleVoteSchema = require("../../utils/vote.schema");
 const {
   createQuestionSchema,
   updateQuestionSchema,
-  toggleVoteSchema,
 } = require("./question.validation");
 const { protect } = require("../auth/auth.middleware");
 
 const router = express.Router();
+
+router.use("/:questionId/answers", answerRoutes);
 
 router.get("/", QuestionController.getAllQuestions);
 router.post(
@@ -17,15 +20,6 @@ router.post(
   validate(createQuestionSchema),
   QuestionController.createQuestion,
 );
-
-router.get("/:id", QuestionController.getQuestion);
-router.patch(
-  "/:id",
-  protect,
-  validate(updateQuestionSchema),
-  QuestionController.updateQuestion,
-);
-router.delete("/:id", protect, QuestionController.deleteQuestion);
 
 router.patch(
   "/:id/vote",
@@ -38,5 +32,14 @@ router.patch(
   protect,
   QuestionController.acceptAnswer,
 );
+
+router.get("/:id", QuestionController.getQuestion);
+router.patch(
+  "/:id",
+  protect,
+  validate(updateQuestionSchema),
+  QuestionController.updateQuestion,
+);
+router.delete("/:id", protect, QuestionController.deleteQuestion);
 
 module.exports = router;

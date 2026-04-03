@@ -12,12 +12,7 @@ const updateQuestionSchema = Joi.object({
   tags: Joi.array().items(Joi.string()).max(5),
 }).min(1);
 
-const toggleVoteSchema = Joi.object({
-  voteType: Joi.string().valid("up", "down").required(),
-});
-
 module.exports = {
   createQuestionSchema,
   updateQuestionSchema,
-  toggleVoteSchema,
 };
