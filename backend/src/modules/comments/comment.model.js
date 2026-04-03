@@ -26,6 +26,13 @@ const commentSchema = new mongoose.Schema(
       index: true,
     },
 
+    parentComment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+      index: true,
+    },
+
     // Author
 
     author: {
@@ -78,11 +85,10 @@ commentSchema.index({ author: 1, createdAt: -1 });
 
 // Pre-save Middleware
 
-commentSchema.pre("save", function (next) {
-  if (!this.isNew("body") && this.isModified("body")) {
+commentSchema.pre("save", function () {
+  if (!this.isNew && this.isModified("body")) {
     this.isEdited = true;
   }
-  next();
 });
 
 // Virtual Fields
@@ -95,9 +101,8 @@ commentSchema.virtual("isLikedBy").get(function () {
 
 // Query Middleware
 
-commentSchema.pre(/^find/, function (next) {
+commentSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 const Comment = mongoose.model("Comment", commentSchema);

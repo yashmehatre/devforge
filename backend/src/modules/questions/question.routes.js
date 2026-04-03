@@ -1,6 +1,7 @@
 const express = require("express");
 const QuestionController = require("./question.controller");
 const answerRoutes = require("./answer.routes");
+const commentRoutes = require("../comments/comment.routes");
 const validate = require("../../utils/validate");
 const toggleVoteSchema = require("../../utils/vote.schema");
 const {
@@ -11,6 +12,7 @@ const { protect } = require("../auth/auth.middleware");
 
 const router = express.Router();
 
+router.use("/:questionId/comments", commentRoutes);
 router.use("/:questionId/answers", answerRoutes);
 
 router.get("/", QuestionController.getAllQuestions);

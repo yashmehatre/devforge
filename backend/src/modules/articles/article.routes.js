@@ -1,5 +1,6 @@
 const express = require("express");
 const ArticleController = require("./article.controller");
+const commentRoutes = require("../comments/comment.routes");
 const { protect } = require("../auth/auth.middleware");
 const validate = require("../../utils/validate");
 const {
@@ -9,6 +10,8 @@ const {
 } = require("./article.validation");
 
 const router = express.Router({ mergeParams: true });
+
+router.use("/:articleId/comments", commentRoutes);
 
 router.get(
   "/",

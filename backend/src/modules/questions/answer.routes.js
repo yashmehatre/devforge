@@ -1,5 +1,6 @@
 const express = require("express");
 const AnswerController = require("./answer.controller");
+const commentRoutes = require("../comments/comment.routes");
 const { protect } = require("../auth/auth.middleware");
 const validate = require("../../utils/validate");
 const {
@@ -9,6 +10,8 @@ const {
 const toggleVoteSchema = require("../../utils/vote.schema");
 
 const router = express.Router({ mergeParams: true });
+
+router.use("/:answerId/comments", commentRoutes);
 
 router.get("/", AnswerController.getAllAnswers);
 router.post(
