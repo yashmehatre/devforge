@@ -12,7 +12,11 @@ const getAllJobs = catchAsync(async (req, res, next) => {
   ];
   const { page, limit, minSalary, maxSalary } = req.query;
   let filters = {};
-  filters.status = req.query.status || "published";
+  if (req.user && req.query.status && req.query.status !== "published") {
+    filters.company = req.user._id;
+  } else {
+    filters.status = req.query.status || "published";
+  }
   const sort = req.query.sort ? req.query.sort.split(",").join(" ") : undefined;
   filterFields.forEach((field) => {
     if (req.query[field] !== undefined) {

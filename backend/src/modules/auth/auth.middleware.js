@@ -27,6 +27,25 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+const optionalProtect = catchAsync(async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer")) return next();
+
+  const token = authHeader.split(" ")[1];
+
+  let decoded;
+  try {
+    decoded = verifyToken(token, config.jwt.secret);
+  } catch (err) {
+    return next();
+  }
+  const user = await User.findById(decoded.id).select("+passwordChangedAt");
+  if (!user || user.isPasswordChangedAfter(decoded.iat)) return next();
+
+  req.user = user;
+  next();
+});
+
 const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -38,4 +57,4 @@ const restrictTo = (...roles) => {
   };
 };
 
-module.exports = { protect, restrictTo };
+module.exports = { protect, optionalProtect, restrictTo };
