@@ -43,8 +43,8 @@ const createJob = async (userId, jobData) => {
   ];
   const creates = {};
   allowedFields.forEach((field) => {
-    if (updateData[field] !== undefined) {
-      creates[field] = updateData[field];
+    if (jobData[field] !== undefined) {
+      creates[field] = jobData[field];
     }
   });
   const job = await Job.create({
@@ -124,4 +124,14 @@ const featureJob = async (slug, isFeatured) => {
   );
   if (!job) throw new AppError("Job not found", 404);
   return { job };
+};
+
+module.exports = {
+  getAllJobs,
+  getJob,
+  createJob,
+  updateJob,
+  deleteJob,
+  updateJobStatus,
+  featureJob,
 };
