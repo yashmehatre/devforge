@@ -5,7 +5,7 @@ const statusHistorySchema = new mongoose.Schema(
     status: {
       type: String,
       enum: [
-        "sumitted",
+        "submitted",
         "reviewed",
         "shortlisted",
         "interview",
@@ -121,7 +121,7 @@ applicationSchema.index({ createdAt: -1 });
 
 // Pre-save Middleware
 
-applicationSchema.pre("save", function (next) {
+applicationSchema.pre("save", function () {
   if (this.isNew) {
     this.statusHistory.push({
       status: "submitted",
@@ -129,10 +129,9 @@ applicationSchema.pre("save", function (next) {
       changedBy: this.applicant,
     });
   }
-  next();
 });
 
-applicationSchema.pre("save", function (next) {
+applicationSchema.pre("save", function () {
   if (this.isModified("status") && !this.isNew) {
     this.statusHistory.push({
       status: this.status,
@@ -140,7 +139,6 @@ applicationSchema.pre("save", function (next) {
       changedBy: this.changedBy || this.applicant,
     });
   }
-  next();
 });
 
 // Virtual Fields
@@ -157,9 +155,8 @@ applicationSchema.virtual("isPending").get(function () {
 
 // Query Middleware
 
-applicationSchema.pre(/^find/, function (next) {
+applicationSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 const Application = mongoose.model("Application", applicationSchema);

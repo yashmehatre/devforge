@@ -71,7 +71,7 @@ const jobSchema = new mongoose.Schema(
 
     employmentType: {
       type: String,
-      enum: ["full-tine", "part-time", "internship", "freelance"],
+      enum: ["full-time", "part-time", "internship", "freelance"],
       default: "full-time",
       index: true,
     },
@@ -166,7 +166,7 @@ jobSchema.index(
 
 // Pre-save Middleware
 
-jobSchema.pre("save", async function (next) {
+jobSchema.pre("save", async function () {
   if (this.isModified("title")) {
     const baseSlug = slugify(this.title, {
       lower: true,
@@ -185,25 +185,22 @@ jobSchema.pre("save", async function (next) {
       this.slug = baseSlug;
     }
   }
-  next();
 });
 
-jobSchema.pre("save", function (next) {
+jobSchema.pre("save", function () {
   if (this.isModified("status") && this.status === "published") {
     if (!this.publishedAt) {
       this.publishedAt = Date.now();
     }
   }
-  next();
 });
 
 // Custom Validation
 
-jobSchema.pre("validate", function (next) {
+jobSchema.pre("validate", function () {
   if (!this.isRemote && !this.location) {
     this.invalidate("location", "Location is required for non-remote jobs");
   }
-  next();
 });
 
 // Virtual Fields
@@ -218,9 +215,8 @@ jobSchema.virtual("isOpen").get(function () {
 
 // Query Middleware
 
-jobSchema.pre(/^find/, function (next) {
+jobSchema.pre(/^find/, function () {
   this.find({ isActive: { $ne: false } });
-  next();
 });
 
 const Job = mongoose.model("Job", jobSchema);
