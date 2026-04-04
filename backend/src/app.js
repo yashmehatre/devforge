@@ -7,6 +7,7 @@ const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const articleRoutes = require("./modules/articles/article.routes");
 const questionRoutes = require("./modules/questions/question.routes");
+const jobRoutes = require("./modules/jobs/job.routes");
 const AppError = require("./utils/AppError");
 
 const app = express();
@@ -51,6 +52,7 @@ app.use("/api/v1/auth", authLimiter, authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/articles", articleRoutes);
 app.use("/api/v1/questions", questionRoutes);
+app.use("/api/v1/jobs", jobRoutes);
 
 // 404 Handler
 
