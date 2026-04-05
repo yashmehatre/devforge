@@ -14,7 +14,7 @@ const getAllQuestions = async ({
       .populate("author", "username fullName avatar")
       .sort(sort)
       .select("-votes")
-      .limit(limits)
+      .limit(limit)
       .skip(skip),
     Question.countDocuments(filters),
   ]);

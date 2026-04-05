@@ -19,6 +19,7 @@ const getAllQuestions = catchAsync(async (req, res, next) => {
     total,
     page,
     limit,
+    totalPages,
     data: { questions },
   });
 });
