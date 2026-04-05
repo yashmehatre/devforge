@@ -1,5 +1,6 @@
 const express = require("express");
 const JobController = require("./job.controller");
+const applicationRoutes = require("./modules/applications/application.routes");
 const {
   protect,
   optionalProtect,
@@ -14,6 +15,8 @@ const {
 } = require("./job.validation");
 
 const router = express.Router();
+
+router.use("/:jobId/applications", applicationRoutes);
 
 router.get("/", optionalProtect, JobController.getAllJobs);
 router.post("/", protect, validate(createJobSchema), JobController.createJob);
