@@ -1,7 +1,7 @@
 const AnswerService = require("./answer.service");
 const catchAsync = require("../../utils/catchAsync");
 
-const getAllANswers = catchAsync(async (req, res, next) => {
+const getAllAnswers = catchAsync(async (req, res, next) => {
   const { page, limit, isAccepted } = req.query;
   const { questionId } = req.params;
   const filters = {};
