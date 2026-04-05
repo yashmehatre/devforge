@@ -2,6 +2,10 @@ const Joi = require("joi");
 
 const createCommentSchema = Joi.object({
   body: Joi.string().min(10).required(),
+  onModel: Joi.string()
+    .valid("Article", "Question", "Answer", "Comment")
+    .required(),
+  onId: Joi.string().required(),
 });
 
 const updateCommentSchema = Joi.object({
