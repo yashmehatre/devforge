@@ -1,4 +1,13 @@
 {
+  "name": "devforge-backend",
+  "version": "0.4.0",
+  "description": "DevForge backend API — developer community and career platform",
+  "main": "server.js",
+  "author": "Yash Mehatre",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
