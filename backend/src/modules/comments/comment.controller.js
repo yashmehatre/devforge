@@ -2,10 +2,12 @@ const CommentService = require("./comment.service");
 const catchAsync = require("../../utils/catchAsync");
 
 const getAllComments = catchAsync(async (req, res, next) => {
-  const { page, limit } = req.query;
-  const { onModel } = req.body;
+  const { onModel, page, limit } = req.query;
   const onId =
-    req.params.articleId || req.params.questionId || req.params.answerId;
+    req.params.articleId ||
+    req.params.questionId ||
+    req.params.answerId ||
+    req.params.commentId;
   let parentComment;
   if (req.params.commentId) parentComment = req.params.commentId;
   const { comments, total, totalPages } = await CommentService.getAllComments({
@@ -39,7 +41,10 @@ const createComment = catchAsync(async (req, res, next) => {
   const { onModel, body } = req.body;
   const commentData = { body };
   const onId =
-    req.params.articleId || req.params.questionId || req.params.answerId;
+    req.params.articleId ||
+    req.params.questionId ||
+    req.params.answerId ||
+    req.params.commentId;
   const { comment } = await CommentService.createComment(
     userId,
     onModel,

@@ -5,7 +5,6 @@ const createCommentSchema = Joi.object({
   onModel: Joi.string()
     .valid("Article", "Question", "Answer", "Comment")
     .required(),
-  onId: Joi.string().required(),
 });
 
 const updateCommentSchema = Joi.object({
