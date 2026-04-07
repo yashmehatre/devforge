@@ -3,7 +3,7 @@ const AppError = require("../../utils/AppError");
 
 const getFeed = async (filters = {}, page = 1, limit = 20) => {
   const skip = (page - 1) * limit;
-  const query = { status: "published", isActive: { $ne: false }, ...filters };
+  const query = { status: "published", ...filters };
 
   const [articles, total] = await Promise.all([
     Article.find(query)

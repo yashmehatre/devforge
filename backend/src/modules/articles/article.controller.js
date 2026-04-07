@@ -7,8 +7,8 @@ const getArticles = catchAsync(async (req, res, next) => {
   if (category) filters.category = category;
   if (tags) filters.tags = { $in: tags.split(",") };
 
-  if (req.params.id) {
-    filters.author = req.params.id;
+  if (req.query.id) {
+    filters.author = req.query.id;
   }
 
   const { articles, total } = await ArticleService.getFeed(
