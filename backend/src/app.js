@@ -11,6 +11,7 @@ const jobRoutes = require("./modules/jobs/job.routes");
 const applicationRoutes = require("./modules/applications/application.routes");
 const commentRoutes = require("./modules/comments/comment.routes");
 const AppError = require("./utils/AppError");
+const path = require("path");
 
 const app = express();
 
@@ -57,6 +58,8 @@ app.use("/api/v1/questions", questionRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/comments", commentRoutes);
+
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // 404 Handler
 

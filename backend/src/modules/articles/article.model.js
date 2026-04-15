@@ -32,6 +32,10 @@ const articleSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    resumeKey: {
+      type: String,
+      select: false,
+    },
     readTime: {
       type: Number,
       default: 0,

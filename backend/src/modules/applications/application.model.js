@@ -57,6 +57,10 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       required: [true, "Resume is required"],
     },
+    resumeKey: {
+      type: String,
+      select: false,
+    },
     coverLetter: {
       type: String,
       maxlength: [2000, "Cover letter cannot exceed 2000 characters"],
