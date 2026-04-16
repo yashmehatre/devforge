@@ -1,6 +1,19 @@
 const ArticleService = require("./article.service");
 const catchAsync = require("../../utils/catchAsync");
 
+const uploadCover = catchAsync(async (req, res, next) => {
+  const updatedArticle = await ArticleService.uploadCover(
+    req.params._id,
+    req.user._id,
+    req.file,
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: { article: updatedArticle },
+  });
+});
+
 const getArticles = catchAsync(async (req, res, next) => {
   const { page, limit, category, tags } = req.query;
   const filters = {};
@@ -123,4 +136,5 @@ module.exports = {
   draftArticle,
   toggleLike,
   toggleBookmark,
+  uploadCover,
 };
