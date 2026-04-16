@@ -1,5 +1,48 @@
 const Article = require("./article.model");
 const AppError = require("../../utils/AppError");
+const storage = require("../../utils/storage");
+const { processCoverImage } = require("../../utils/imageProcessor");
+
+const uploadCover = async (articleId, userId, file) => {
+  if (!file) {
+    throw new AppError("Please upload an image file.", 400);
+  }
+
+  const article = await Article.findOne({
+    _id: articleId,
+    author: userId,
+  }).select("+coverImageKey");
+
+  if (!article) {
+    throw new AppError("Article not found or you do not own it.", 404);
+  }
+
+  const processedBuffer = await processCoverImage(file.buffer);
+
+  const { key, url } = await storage.uploadFile(
+    processedBuffer,
+    "covers",
+    "image/webp",
+  );
+
+  await Article.findByIdAndUpdate(articleId, {
+    coverImage: url,
+    coverImageKey: key,
+  });
+
+  try {
+    await storage.deleteFile(article.coverImageKey);
+  } catch (err) {
+    console.error(
+      "Failed to delete old cover image:",
+      article.coverImageKey,
+      err.message,
+    );
+  }
+
+  const updatedArticle = await Article.findById(articleId);
+  return updatedArticle;
+};
 
 const getFeed = async (filters = {}, page = 1, limit = 20) => {
   const skip = (page - 1) * limit;
@@ -136,4 +179,5 @@ module.exports = {
   draftArticle,
   toggleLike,
   toggleBookmark,
+  uploadCover,
 };

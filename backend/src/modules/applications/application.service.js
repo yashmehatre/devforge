@@ -1,6 +1,67 @@
 const Application = require("./application.model");
 const Job = require("../jobs/job.model");
 const AppError = require("../../utils/AppError");
+const storage = require("../../utils/storage");
+
+const uploadResume = async (applicationId, userId, file) => {
+  if (!file) {
+    throw new AppError("Please upload a PDF file.", 400);
+  }
+
+  const application = await Application.findOne({
+    _id: applicationId,
+    applicant: userId,
+  }).select("+resumeKey");
+
+  if (!application) {
+    throw new AppError("Application not found or you do not own it.", 404);
+  }
+
+  const { key, url } = await storage.uploadFile(
+    file.buffer,
+    "resumes",
+    "application/pdf",
+  );
+
+  await Application.findByIdAndUpdate(applicationId, {
+    resume: url,
+    resumeKey: key,
+  });
+
+  try {
+    await storage.deleteFile(application.resumeKey);
+  } catch (err) {
+    console.error(
+      "Failed to delete old resume:",
+      application.resumeKey,
+      err.message,
+    );
+  }
+
+  const updatedApplication = await Application.findById(application);
+  return updatedApplication;
+};
+
+const getResume = async (applicationId, userId, userRole) => {
+  const filter =
+    userRole === "developer"
+      ? { _id: applicationId, applicant: userId }
+      : { _id: applicationId, company: userId };
+
+  const application = await Application.findOne(filter).select("+resumeKey");
+
+  if (!application) {
+    throw new AppError("Application not found or access denied.", 404);
+  }
+
+  if (!application.resumeKey) {
+    throw new AppError("No resume uploaded for this application.", 404);
+  }
+
+  const url = await storage.getPresignedUrl(application.resumeKey, 900);
+
+  return { url, expiresIn: 900 };
+};
 
 const getAllApplications = async ({
   filters = {},

@@ -32,7 +32,7 @@ const articleSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    resumeKey: {
+    coverImageKey: {
       type: String,
       select: false,
     },
