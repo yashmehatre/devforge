@@ -98,6 +98,13 @@ app.use((err, req, res, next) => {
     err = new AppError("Token expired. Please log in again.", 401);
   }
 
+  if (err.name === "MulterError") {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return next(new AppError("File size exceeds the allowed limit.", 400));
+    }
+    return next(new AppError("File upload error. Please try again.", 400));
+  }
+
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
