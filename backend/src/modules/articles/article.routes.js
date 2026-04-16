@@ -8,8 +8,11 @@ const {
   updateArticleSchema,
   getUserArticlesSchema,
 } = require("./article.validation");
+const { uploadCover } = require('../../utils/multer');
 
 const router = express.Router({ mergeParams: true });
+
+router.route('/:id/cover-image').post(protect, uploadCover.single('coverImage'), ArticleController.uploadCover);
 
 router.use("/:articleId/comments", commentRoutes);
 
