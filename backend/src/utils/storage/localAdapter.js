@@ -3,6 +3,8 @@ const path = require("path");
 const { promisify } = require("util");
 const { v4: uuidv4 } = require("uuid");
 const config = require("../../config/env");
+const crypto = require("crypto");
+const { generateFileToken } = require("../fileToken");
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -33,9 +35,10 @@ async function deleteFile(key) {
   }
 }
 
-async function getPresignedUrl(key) {
+async function getPresignedUrl(key, expiresIn = 900) {
   if (!key) return null;
-  return `${config.upload.localUploadUrl}/uploads/${key}`;
+  const token = generateFileToken(key, expiresIn);
+  return `${config.upload.localUploadUrl}/api/v1/files/${key}?token=${token}`;
 }
 
 module.exports = { uploadFile, deleteFile, getPresignedUrl };

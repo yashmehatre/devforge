@@ -12,6 +12,7 @@ const applicationRoutes = require("./modules/applications/application.routes");
 const commentRoutes = require("./modules/comments/comment.routes");
 const AppError = require("./utils/AppError");
 const path = require("path");
+const { verifyFileToken } = require("./utils/fileToken");
 
 const app = express();
 
@@ -59,7 +60,40 @@ app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/comments", commentRoutes);
 
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+app.use(
+  "/uploads/avatars",
+  express.static(path.join(__dirname, "..", "uploads", "avatars")),
+);
+
+app.use(
+  "/uploads/covers",
+  express.static(path.join(__dirname, "..", "uploads", "covers")),
+);
+
+app.get("/api/v1/files/*", function (req, res, next) {
+  const key = req.params[0];
+  const token = req.query.token;
+
+  if (!token || !verifyFileToken(key, token)) {
+    return res.status(403).json({
+      status: "fail",
+      message: "Access denied. Invalid or expired file token.",
+    });
+  }
+
+  const filePath = path.join(__dirname, "..", "uploads", key);
+
+  res.sendFile(filePath, function (err) {
+    if (!err) return;
+    if (err.code === "ENOENT" || err.status === 404) {
+      return res.status(404).json({
+        status: "fail",
+        message: "File not found.",
+      });
+    }
+    next(err);
+  });
+});
 
 // 404 Handler
 

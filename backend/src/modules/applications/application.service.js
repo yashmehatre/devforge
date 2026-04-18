@@ -164,4 +164,6 @@ module.exports = {
   createApplication,
   updateApplicationStatus,
   addApplicationNote,
+  uploadResume,
+  getResume,
 };

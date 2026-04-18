@@ -5,7 +5,7 @@ const AppError = require("./AppError");
 const storage = multer.memoryStorage();
 
 function createFileFilter(allowedMimeTypes, allowedExtensions) {
-  return function (req, res, cb) {
+  return function (req, file, cb) {
     const mimetype = allowedMimeTypes.includes(file.mimetype);
     const extension = allowedExtensions.includes(
       path.extname(file.originalname).toLowerCase(),
@@ -39,7 +39,7 @@ const uploadAvatar = multer({
 const uploadCover = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: documentFilter,
+  fileFilter: imageFilter,
 });
 
 const uploadResume = multer({

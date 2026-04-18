@@ -14,6 +14,7 @@ const requiredEnvVars = [
   "GOOGLE_CALLBACK_URL",
   "STORAGE_ADAPTER",
   "LOCAL_UPLOAD_URL",
+  "FILE_TOKEN_SECRET",
 ];
 
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
@@ -51,6 +52,7 @@ const config = {
   upload: {
     storageAdapter: process.env.STORAGE_ADAPTER,
     localUploadUrl: process.env.LOCAL_UPLOAD_URL,
+    fileTokenSecret: process.env.FILE_TOKEN_SECRET,
     r2: {
       accessKeyId: process.env.R2_ACCESS_KEY_ID,
       secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
