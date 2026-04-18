@@ -4,8 +4,13 @@ const { protect } = require("../auth/auth.middleware");
 const validate = require("../../utils/validate");
 const { updateMeSchema } = require("../auth/auth.validation");
 const articleRouter = require("../articles/article.routes");
+const { uploadAvatar } = require("../../utils/multer");
 
 const router = express.Router();
+
+router
+  .route("/me/avatar")
+  .post(protect, uploadAvatar.single("avatar"), UserController.uploadAvatar);
 
 router.use("/:id/articles", articleRouter);
 

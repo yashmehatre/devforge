@@ -12,6 +12,9 @@ const requiredEnvVars = [
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "GOOGLE_CALLBACK_URL",
+  "STORAGE_ADAPTER",
+  "LOCAL_UPLOAD_URL",
+  "FILE_TOKEN_SECRET",
 ];
 
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
@@ -45,6 +48,18 @@ const config = {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackUrl: process.env.GOOGLE_CALLBACK_URL,
+  },
+  upload: {
+    storageAdapter: process.env.STORAGE_ADAPTER,
+    localUploadUrl: process.env.LOCAL_UPLOAD_URL,
+    fileTokenSecret: process.env.FILE_TOKEN_SECRET,
+    r2: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+      endpoint: process.env.R2_ENDPOINT,
+      bucketName: process.env.R2_BUCKET_NAME,
+      publicUrl: process.env.R2_PUBLIC_URL,
+    },
   },
 };
 

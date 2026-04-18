@@ -30,6 +30,7 @@ router.patch(
   "/:slug/feature",
   protect,
   restrictTo("admin"),
+  validate(featureJobSchema),
   JobController.featureJob,
 );
 router.get("/:slug", JobController.getJob);

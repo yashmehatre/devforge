@@ -11,6 +11,8 @@ const jobRoutes = require("./modules/jobs/job.routes");
 const applicationRoutes = require("./modules/applications/application.routes");
 const commentRoutes = require("./modules/comments/comment.routes");
 const AppError = require("./utils/AppError");
+const path = require("path");
+const { verifyFileToken } = require("./utils/fileToken");
 
 const app = express();
 
@@ -58,6 +60,50 @@ app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/comments", commentRoutes);
 
+app.use(
+  "/uploads/avatars",
+  express.static(path.join(__dirname, "..", "uploads", "avatars")),
+);
+
+app.use(
+  "/uploads/covers",
+  express.static(path.join(__dirname, "..", "uploads", "covers")),
+);
+
+app.get("/api/v1/files/*key", function (req, res, next) {
+  const rawKey = req.params.key;
+  const key = Array.isArray(rawKey) ? rawKey.join("/") : rawKey;
+  const token = req.query.token ? decodeURIComponent(req.query.token) : null;
+
+  if (!token || !verifyFileToken(key, token)) {
+    return res.status(403).json({
+      status: "fail",
+      message: "Access denied. Invalid or expired file token.",
+    });
+  }
+
+  const filePath = path.join(__dirname, "..", "uploads", key);
+
+  res.sendFile(
+    filePath,
+    {
+      headers: {
+        "Content-Disposition": "inline",
+      },
+    },
+    function (err) {
+      if (!err) return;
+      if (err.code === "ENOENT" || err.status === 404) {
+        return res.status(404).json({
+          status: "fail",
+          message: "File not found.",
+        });
+      }
+      next(err);
+    },
+  );
+});
+
 // 404 Handler
 
 app.use((req, res, next) => {
@@ -93,6 +139,13 @@ app.use((err, req, res, next) => {
   // JWT Expired
   if (err.name === "TokenExpiredError") {
     err = new AppError("Token expired. Please log in again.", 401);
+  }
+
+  if (err.name === "MulterError") {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return next(new AppError("File size exceeds the allowed limit.", 400));
+    }
+    return next(new AppError("File upload error. Please try again.", 400));
   }
 
   err.statusCode = err.statusCode || 500;

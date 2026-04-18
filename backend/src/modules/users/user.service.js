@@ -1,6 +1,39 @@
 const User = require("./user.model");
 const Follow = require("./follow.model");
 const AppError = require("../../utils/AppError");
+const storage = require("../../utils/storage");
+const { processAvatar } = require("../../utils/imageProcessor");
+
+const uploadAvatar = async (userId, file) => {
+  if (!file) {
+    throw new AppError("Please upload an image file.", 400);
+  }
+
+  const processedBuffer = await processAvatar(file.buffer);
+
+  const { key, url } = await storage.uploadFile(
+    processedBuffer,
+    "avatars",
+    "image/webp",
+  );
+
+  const oldUser = await User.findById(userId).select("+avatarKey");
+
+  await User.findByIdAndUpdate(userId, { avatar: url, avatarKey: key });
+
+  try {
+    await storage.deleteFile(oldUser.avatarKey);
+  } catch (err) {
+    console.error(
+      "Failed to delete old avatar:",
+      oldUser.avatarKey,
+      err.message,
+    );
+  }
+
+  const updatedUser = await User.findById(userId);
+  return updatedUser;
+};
 
 const getMe = async (userId) => {
   const user = await User.findById(userId);
@@ -110,4 +143,5 @@ module.exports = {
   unfollow,
   getFollowers,
   getFollowing,
+  uploadAvatar,
 };
