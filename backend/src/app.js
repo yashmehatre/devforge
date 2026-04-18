@@ -71,8 +71,9 @@ app.use(
 );
 
 app.get("/api/v1/files/*key", function (req, res, next) {
-  const key = req.params[0];
-  const token = req.query.token;
+  const rawKey = req.params.key;
+  const key = Array.isArray(rawKey) ? rawKey.join("/") : rawKey;
+  const token = req.query.token ? decodeURIComponent(req.query.token) : null;
 
   if (!token || !verifyFileToken(key, token)) {
     return res.status(403).json({
