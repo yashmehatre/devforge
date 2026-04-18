@@ -1,6 +1,15 @@
 const UserService = require("./user.service");
 const catchAsync = require("../../utils/catchAsync");
 
+const uploadAvatar = catchAsync(async (req, res, next) => {
+  const updatedUser = await UserService.uploadAvatar(req.user._id, req.file);
+
+  res.status(200).json({
+    status: "success",
+    data: { user: updatedUser },
+  });
+});
+
 const getMe = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
   const { user } = await UserService.getMe(userId);
@@ -88,4 +97,5 @@ module.exports = {
   unfollow,
   getFollowers,
   getFollowing,
+  uploadAvatar,
 };

@@ -32,6 +32,10 @@ const articleSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    coverImageKey: {
+      type: String,
+      select: false,
+    },
     readTime: {
       type: Number,
       default: 0,
@@ -191,9 +195,9 @@ articleSchema.pre("save", function () {
 
 // Query Middleware
 
-// articleSchema.pre(/^find/, function () {
-//   this.find({ isActive: { $ne: false } });
-// });
+articleSchema.pre(/^find/, function () {
+  this.find({ isActive: { $ne: false } });
+});
 
 // Virtual Fields
 

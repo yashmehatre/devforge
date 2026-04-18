@@ -46,6 +46,7 @@ const createComment = async (userId, onModel, onId, commentData) => {
     onModel,
     onId,
     author: userId,
+    parentComment: onModel === "Comment" ? onId : null,
   });
   const increment = onModel === "Comment" ? "repliesCount" : "commentsCount";
   const ParentModel = modelMap[onModel];

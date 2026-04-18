@@ -19,6 +19,7 @@ const getAllQuestions = catchAsync(async (req, res, next) => {
     total,
     page,
     limit,
+    totalPages,
     data: { questions },
   });
 });
@@ -86,14 +87,14 @@ const acceptAnswer = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
   const questionId = req.params.id;
   const { answerId } = req.params;
-  const { updated } = await QuestionService.acceptAnswer(
+  const { question } = await QuestionService.acceptAnswer(
     userId,
     questionId,
     answerId,
   );
   res.status(200).json({
     status: "success",
-    data: { updated },
+    data: { question },
   });
 });
 

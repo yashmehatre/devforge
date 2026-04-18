@@ -128,6 +128,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    avatarKey: {
+      type: String,
+      select: false,
+    },
     bio: {
       type: String,
       maxlength: [300, "Bio cannot exceed 300 characters"],

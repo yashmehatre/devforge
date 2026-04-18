@@ -1,6 +1,32 @@
 const ApplicationService = require("./application.service");
 const catchAsync = require("../../utils/catchAsync");
 
+const uploadResume = catchAsync(async (req, res, next) => {
+  const updatedApplication = await ApplicationService.uploadResume(
+    req.params.id,
+    req.user._id,
+    req.file,
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: { application: { updatedApplication } },
+  });
+});
+
+const getResume = catchAsync(async (req, res, next) => {
+  const result = await ApplicationService.getResume(
+    req.params.id,
+    req.user._id,
+    req.user.role,
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: result,
+  });
+});
+
 const getAllApplications = catchAsync(async (req, res, next) => {
   const { page, limit } = req.query;
   const sort = req.query.sort ? req.query.sort.split(",").join(" ") : undefined;
@@ -93,4 +119,6 @@ module.exports = {
   createApplication,
   updateApplicationStatus,
   addApplicationNote,
+  uploadResume,
+  getResume,
 };

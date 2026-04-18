@@ -51,7 +51,9 @@ const updateJobSchema = Joi.object({
 }).min(1);
 
 const updateJobStatusSchema = Joi.object({
-  status: Joi.string("draft", "published", "closed", "archived").required(),
+  status: Joi.string()
+    .valid("draft", "published", "closed", "archived")
+    .required(),
 });
 
 const featureJobSchema = Joi.object({

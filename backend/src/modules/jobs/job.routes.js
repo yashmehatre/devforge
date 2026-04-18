@@ -1,6 +1,6 @@
 const express = require("express");
 const JobController = require("./job.controller");
-const applicationRoutes = require("./modules/applications/application.routes");
+const applicationRoutes = require("../applications/application.routes");
 const {
   protect,
   optionalProtect,
@@ -30,6 +30,7 @@ router.patch(
   "/:slug/feature",
   protect,
   restrictTo("admin"),
+  validate(featureJobSchema),
   JobController.featureJob,
 );
 router.get("/:slug", JobController.getJob);

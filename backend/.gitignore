@@ -4,3 +4,7 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+
+# Local file uploads — never commit user files
+uploads/*
+!uploads/**/.gitkeep

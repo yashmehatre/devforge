@@ -7,11 +7,17 @@ const {
   updateCommentSchema,
 } = require("./comment.validation");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.get("/", CommentController.getAllComments);
 router.post(
   "/",
+  protect,
+  validate(createCommentSchema),
+  CommentController.createComment,
+);
+router.post(
+  "/:commentId/replies",
   protect,
   validate(createCommentSchema),
   CommentController.createComment,

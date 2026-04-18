@@ -7,8 +7,23 @@ const {
   addApplicationNoteSchema,
 } = require("./application.validation");
 const { protect, restrictTo } = require("../auth/auth.middleware");
+const { uploadResume } = require("../../utils/multer");
 
 const router = express.Router({ mergeParams: true });
+
+router
+  .route("/:id/resume")
+  .post(
+    protect,
+    restrictTo("developer"),
+    uploadResume.single("resume"),
+    ApplicationController.uploadResume,
+  )
+  .get(
+    protect,
+    restrictTo("developer", "company"),
+    ApplicationController.getResume,
+  );
 
 router.get("/", protect, ApplicationController.getAllApplications);
 router.post(
