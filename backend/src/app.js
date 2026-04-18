@@ -70,7 +70,7 @@ app.use(
   express.static(path.join(__dirname, "..", "uploads", "covers")),
 );
 
-app.get("/api/v1/files/*", function (req, res, next) {
+app.get("/api/v1/files/*key", function (req, res, next) {
   const key = req.params[0];
   const token = req.query.token;
 
@@ -83,16 +83,24 @@ app.get("/api/v1/files/*", function (req, res, next) {
 
   const filePath = path.join(__dirname, "..", "uploads", key);
 
-  res.sendFile(filePath, function (err) {
-    if (!err) return;
-    if (err.code === "ENOENT" || err.status === 404) {
-      return res.status(404).json({
-        status: "fail",
-        message: "File not found.",
-      });
-    }
-    next(err);
-  });
+  res.sendFile(
+    filePath,
+    {
+      headers: {
+        "Content-Disposition": "inline",
+      },
+    },
+    function (err) {
+      if (!err) return;
+      if (err.code === "ENOENT" || err.status === 404) {
+        return res.status(404).json({
+          status: "fail",
+          message: "File not found.",
+        });
+      }
+      next(err);
+    },
+  );
 });
 
 // 404 Handler
